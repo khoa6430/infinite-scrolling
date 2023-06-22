@@ -12,12 +12,12 @@ export const useFetchListProductInfiniteHook = () => {
   const [isLastPage, setLastPage] = useState<boolean>(false);
 
   const [filter, setFilter] = useState<{
-    pageNumber: number;
-    pageSize: number;
+    skip: number;
+    limit: number;
     searchQuery: string;
   }>({
-    pageNumber: 0,
-    pageSize: 20,
+    skip: 0,
+    limit: 20,
     searchQuery: "",
   });
 
@@ -26,47 +26,55 @@ export const useFetchListProductInfiniteHook = () => {
     try {
       const result = await getListProductApi({
         search: filter.searchQuery,
-        page: filter.pageNumber,
-        take: filter.pageSize,
+        skip: filter.skip,
+        limit: filter.limit,
       });
       if (result) {
         if (result?.products.length) {
           let newData = [...data, ...result.products];
           setData(newData);
         }
-        if (result?.products.length < filter.pageSize) {
+        if (result?.products.length < filter.limit) {
           setLastPage(true);
         }
       }
     } finally {
       setLoading(false);
     }
-  }, [filter.pageNumber, filter.pageSize, filter.searchQuery]);
+  }, [filter.skip, filter.limit, filter.searchQuery]);
 
   const handleLoadMore = useCallback(() => {
     setFilter({
       ...filter,
-      pageNumber: Number(filter.pageNumber) + 1,
+      skip: Number(filter.skip) + 1,
     });
-  }, [filter.pageNumber]);
+  }, [filter.skip]);
 
   const isLoadingInit = useMemo(() => {
-    return loading && filter?.pageNumber === 1;
+    return loading && filter?.skip === 1;
   }, [loading, filter]);
 
   const handleSearch = useCallback((searchQuery: string) => {
-    setData([]); // Clear previous data
-    setLastPage(false); // Reset last page state
-    setFilter({
-      pageNumber: 0, // Reset page number to start from the first page
-      pageSize: 20,
-      searchQuery,
-    });
+    console.log("searchQuery:", searchQuery);
+    if (searchQuery !== filter.searchQuery) {
+      setData([]); // Clear previous data
+      setLastPage(false); // Reset last page state
+      setFilter({
+        skip: 0, // Reset skip number to start from the first page
+        limit: 20,
+        searchQuery,
+      });
+    } else {
+      setFilter({
+        ...filter,
+        skip: Number(filter.skip) + 1,
+      });
+    }
   }, []);
 
   useEffect(() => {
     fetch();
-  }, [filter.pageNumber, filter.searchQuery]);
+  }, [filter.skip, filter.searchQuery]);
 
   return {
     data,

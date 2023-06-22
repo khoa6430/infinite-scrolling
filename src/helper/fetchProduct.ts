@@ -2,19 +2,19 @@ import axios from "axios";
 import { ListProduct } from "../types/typesProduct";
 
 export const getListProductApi = async ({
-  page = 0,
-  take = 20,
+  skip = 0,
+  limit = 20,
   search = "",
 }: {
-  page: number;
-  take: number;
+  skip: number;
+  limit: number;
   search: string;
 }): Promise<ListProduct | null> => {
   try {
     const res = await axios(
       `https://dummyjson.com/products/search?q=${search}&skip=${
-        page * 10
-      }&limit=${take}
+        skip * 10
+      }&limit=${limit}
       `,
       {
         method: "GET",
