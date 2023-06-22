@@ -55,10 +55,10 @@ export const useFetchListProductInfiniteHook = () => {
   }, [loading, filter]);
 
   const handleSearch = useCallback((searchQuery: string) => {
-    console.log("searchQuery:", searchQuery);
     if (searchQuery !== filter.searchQuery) {
-      setData([]); // Clear previous data
-      setLastPage(false); // Reset last page state
+      // Clear previous data when user has search new value
+      setData([]);
+      setLastPage(false);
       setFilter({
         skip: 0, // Reset skip number to start from the first page
         limit: 20,
