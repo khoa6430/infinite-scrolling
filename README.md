@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Getting Started with Infinite Scrolling and Searchable Product List
 
 ## Available Scripts
 
